@@ -17,3 +17,4 @@ nums_by_7_np_opt = nums_by_7_np.astype('uint16')
 # nums_by_7_np_opt = nums_by_7_np.astype('uint8')
 print(type(nums_by_7_np_opt), nums_by_7_np_opt[3],
       getsizeof(nums_by_7_np_opt), nums_by_7_np_opt.dtype)
+

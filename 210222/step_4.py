@@ -23,3 +23,4 @@ image_np_conv[:, :, 2][image_np_conv[:, :, 2] <= 225] += 30
 new_image = Image.fromarray(image_np_conv.astype('uint8'))
 save_name = 'Desert_conv.jpg'
 new_image.save(save_name)
+

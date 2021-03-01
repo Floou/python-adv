@@ -27,3 +27,4 @@ print(nums_by_7_np.std())
 print(nums_by_7_np.min())
 print(nums_by_7_np.max())
 print(nums_by_7_np.size, nums_by_7_np.shape)
+
