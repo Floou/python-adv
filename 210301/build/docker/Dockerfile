@@ -14,8 +14,7 @@ RUN apk update && \
     apk add --no-cache \
         sudo \
         python3 \
-        py3-pytest \
-        py3-requests && \
+        py3-django && \
     rm -rf /var/cache/apk/* /var/tmp/* /tmp/*
 
 #RUN pip3 install numpy pillow
