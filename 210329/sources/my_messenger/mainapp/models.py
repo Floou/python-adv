@@ -9,7 +9,7 @@ class Dialog(models.Model):
     name = models.CharField(verbose_name='имя', max_length=64, blank=True)
 
     def __str__(self):
-        result = f'{self.created}'
+        result = f'{self.created.strftime("%Y.%m.%d %H:%M")}'
         if self.name:
             result += f' ({self.name})'
         return result
@@ -21,8 +21,8 @@ class Dialog(models.Model):
 
 
 class DialogMemebers(models.Model):
-    CREATOR = 0
-    INTERLOCUTOR = 1
+    CREATOR = '0'
+    INTERLOCUTOR = '1'
 
     ROLE_CHOICES = (
         (CREATOR, 'создатель'),
@@ -39,6 +39,7 @@ class DialogMemebers(models.Model):
                                related_name="dialogs")
     role = models.CharField(verbose_name='роль',
                             choices=ROLE_CHOICES,
+                            # default=CREATOR,
                             max_length=64,
                             db_index=True)
 
@@ -62,4 +63,5 @@ class Message(models.Model):
     class Meta:
         verbose_name = 'сообщение'
         verbose_name_plural = 'сообщения'
-        ordering = ['sender', '-created']
+        # ordering = ['sender', '-created']
+        ordering = ['-created']

@@ -1,12 +1,12 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404
 
-from mainapp.models import Dialog
+from mainapp.models import Dialog, DialogMemebers, Message
 
 
 @login_required
 def index(request):
-    dialogues = request.user.dialogs.all()
+    dialogues = request.user.dialogs.select_related('dialog').all()
     context = {
         'page_title': 'диалоги',
         'dialogues': dialogues,
@@ -15,9 +15,19 @@ def index(request):
     return render(request, 'mainapp/index.html', context)
 
 
-def show_dialogue(request, dialog_pk):
+def show_dialog(request, dialog_pk):
     dialog = get_object_or_404(Dialog, pk=dialog_pk)
-    print(dialog)
+    _dialog_members = DialogMemebers.objects.filter(dialog=dialog)
+    dialog_members = _dialog_members.exclude(member=request.user). \
+        select_related('member')
+    dialog_messages = Message.objects.filter(sender__in=_dialog_members). \
+        select_related('sender__member')
 
-    return render(request, 'mainapp/index.html')
+    context = {
+        'dialog': dialog,
+        'dialog_members': dialog_members,
+        'dialog_messages': dialog_messages,
+    }
+
+    return render(request, 'mainapp/show_dialog.html', context)
 
