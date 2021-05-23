@@ -17,6 +17,12 @@ class Dialog(models.Model):
         return Message.objects.filter(sender__in=self.all_members). \
             select_related('sender__member')
 
+    def get_messages_new(self, user_id=None):
+        result = self.get_messages_all().filter(read=False).order_by('created')
+        if user_id is None:
+            return result
+        return result.exclude(sender=self.get_sender(user_id))
+
     def get_sender(self, user_id):
         return self.all_members.filter(member_id=user_id).first()
 

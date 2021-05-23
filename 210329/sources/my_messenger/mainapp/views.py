@@ -1,6 +1,6 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse
 from django.views.generic import CreateView
@@ -92,3 +92,22 @@ class DialogMessageCreate(CreateView):
             'main:dialog_show',
             kwargs={'dialog_pk': self.object.sender.dialog_id}
         )
+
+
+def dialog_new_messages(request, dialog_pk):
+    if request.is_ajax():
+        dialog = Dialog.objects.filter(pk=dialog_pk).first()
+        status = False
+        new_messages = None
+        if dialog:
+            status = True
+            _new_messages = dialog.get_messages_new(request.user.pk)
+            new_messages = [{'pk': el.pk,
+                             'username': el.sender.member.username,
+                             'created': el.created.strftime('%Y.%m.%d %H:%M'),
+                             'text': el.text}
+                            for el in _new_messages]
+        return JsonResponse({
+            'status': status,
+            'new_messages': new_messages,
+        })
