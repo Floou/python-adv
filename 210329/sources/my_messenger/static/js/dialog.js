@@ -1,3 +1,4 @@
+let REFRESH_TIMEOUT = 2500;
 let $dialogMessagesDOM;
 
 function messageRender(message) {
@@ -22,7 +23,7 @@ window.onload = function () {
         $.ajax({
             url: e.target.href,
             success: function (response) {
-                let new_messages = response.new_messages
+                let new_messages = response.new_messages;
                 if (new_messages) {
                     new_messages.forEach(function (el, idx) {
                         messageRender(el);
@@ -30,8 +31,10 @@ window.onload = function () {
                 }
             }
         })
-    })
-    setInterval(function (){
+    });
+
+
+    setInterval(function () {
         $('.dialog-update').trigger("click");
-    }, 5000);
+    }, REFRESH_TIMEOUT);
 }

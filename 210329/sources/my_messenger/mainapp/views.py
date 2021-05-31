@@ -69,12 +69,15 @@ def user_dialog_create(request, user_id):
     )
 
 
+# CBV
 def dialog_delete(request, pk):
+    # instance = Dialog.objects.filter(pk=pk).first()
     instance = get_object_or_404(Dialog, pk=pk)
     instance.delete()
     return HttpResponseRedirect(reverse('main:index'))
 
 
+# def dialog_message_create(request):
 class DialogMessageCreate(CreateView):
     model = Message
     form_class = DialogMessageForm
@@ -83,11 +86,19 @@ class DialogMessageCreate(CreateView):
         context = super().get_context_data(**kwargs)
         form = context['form']
         sender_pk = self.request.resolver_match.kwargs['sender_pk']
+        # print(context)
+        # print(form.fields['sender'].initial)
+        # print(dir(form.fields['sender']))
+        # print(sender_pk)
+        # print(form.initial)
+        # form.fields['sender'].initial = sender_pk
         form.initial['sender'] = sender_pk
 
         return context
 
     def get_success_url(self):
+        # print(self.object.sender.dialog_id)
+        # return reverse('main:index')
         return reverse(
             'main:dialog_show',
             kwargs={'dialog_pk': self.object.sender.dialog_id}
@@ -102,11 +113,17 @@ def dialog_new_messages(request, dialog_pk):
         if dialog:
             status = True
             _new_messages = dialog.get_messages_new(request.user.pk)
-            new_messages = [{'pk': el.pk,
-                             'username': el.sender.member.username,
-                             'created': el.created.strftime('%Y.%m.%d %H:%M'),
-                             'text': el.text}
-                            for el in _new_messages]
+            # _new_messages.update(read=True)
+            new_messages = [
+                {'pk': el.pk,
+                 'username': el.sender.member.username,
+                 'created': el.created.strftime('%Y.%m.%d %H:%M'),
+                 'text': el.text}
+                for el in _new_messages
+            ]
+            print(f'new messgaes {len(new_messages)}, read update')
+            _new_messages.update(read=True)
+
         return JsonResponse({
             'status': status,
             'new_messages': new_messages,
